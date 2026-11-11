@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'model/language.dart';
 import 'model/category.dart';
+import 'model/recipe.dart';
 import 'widget/home_screen.dart';
+import 'widget/recipe_list_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -23,15 +25,22 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _toggleFavorite(Recipe recipe) {
+    setState(() {
+      recipe.isFavorite = !recipe.isFavorite;
+    });
+  }
+
   void _handleSelectCategory(BuildContext context, FoodCategory category) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _currentLang == 'vi'
-              ? 'Đã chọn danh mục: ${category.titleVi}'
-              : 'Selected category: ${category.titleEn}',
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RecipeListScreen(
+          category: category,
+          currentLang: _currentLang,
+          recipes: AppData.recipeBox.items,
+          onToggleFavorite: _toggleFavorite,
         ),
-        duration: const Duration(seconds: 1),
       ),
     );
   }
@@ -79,7 +88,6 @@ class _MyAppState extends State<MyApp> {
               const SizedBox(width: 8),
             ],
           ),
-
           drawer: Drawer(
             child: ListView(
               children: <Widget>[
@@ -115,16 +123,26 @@ class _MyAppState extends State<MyApp> {
                   },
                 ),
                 const Divider(height: 3),
+                ListTile(
+                  leading: const Icon(Icons.language, color: Colors.deepOrange),
+                  title: Text(
+                    _currentLang == 'vi'
+                        ? 'Chuyển sang Tiếng Anh'
+                        : 'Switch to Vietnamese',
+                  ),
+                  onTap: () {
+                    _toggleLanguage();
+                    Navigator.pop(ctx);
+                  },
+                ),
               ],
             ),
           ),
-
           body: HomeScreen(
             currentLang: _currentLang,
             recipes: AppData.recipeBox.items,
             onSelectCategory: (cat) => _handleSelectCategory(ctx, cat),
           ),
-
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.deepOrange,
