@@ -3,14 +3,13 @@ import 'package:intl/intl.dart';
 
 import '../model/category.dart';
 import '../model/recipe.dart';
-import '../model/language.dart';
+import 'recipe_detail_screen.dart';
 
 class RecipeListScreen extends StatefulWidget {
   final FoodCategory category;
   final String currentLang;
   final List<Recipe> recipes;
   final Function(Recipe) onToggleFavorite;
-  final Function(Recipe)? onSelectRecipe;
 
   const RecipeListScreen({
     super.key,
@@ -18,7 +17,6 @@ class RecipeListScreen extends StatefulWidget {
     required this.currentLang,
     required this.recipes,
     required this.onToggleFavorite,
-    this.onSelectRecipe,
   });
 
   @override
@@ -80,7 +78,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.no_meals_ouline,
+                    Icons.no_meals_outlined,
                     size: 70,
                     color: Colors.grey.shade400,
                   ),
@@ -99,7 +97,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               itemCount: categoryRecipes.length,
               itemBuilder: (ctx, index) {
                 final recipe = categoryRecipes[index];
-
                 return Card(
                   elevation: 3,
                   margin: const EdgeInsets.only(bottom: 14),
@@ -108,21 +105,22 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      if (widget.onSelectRecipe != null) {
-                        widget.onSelectRecipe!(recipe);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              _lang == 'vi'
-                                  ? 'Đang mở chi tiết: ${recipe.titleVi}'
-                                  : 'Opening details: ${recipe.titleEn}',
-                            ),
-                            duration: const Duration(seconds: 1),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RecipeDetailScreen(
+                            recipe: recipe,
+                            currentLang: _lang,
+                            onToggleFavorite: (r) {
+                              setState(() {
+                                widget.onToggleFavorite(r);
+                              });
+                            },
                           ),
-                        );
-                      }
+                        ),
+                      );
+                      setState(() {});
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -149,7 +147,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                             ),
                           ),
                           const SizedBox(width: 12),
-
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +187,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 6),
-
                                 Row(
                                   children: [
                                     const Icon(
@@ -209,7 +205,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 4),
-
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
