@@ -32,6 +32,34 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
     _lang = widget.currentLang;
   }
 
+  Widget _buildRecipeImage(String imageUrl) {
+    final trimmed = imageUrl.trim();
+    final fallback = Container(
+      width: 95,
+      height: 95,
+      color: Colors.orange.shade100,
+      child: const Icon(Icons.fastfood, color: Colors.deepOrange, size: 40),
+    );
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return Image.network(
+        trimmed,
+        width: 95,
+        height: 95,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => fallback,
+      );
+    }
+
+    return Image.asset(
+      trimmed,
+      width: 95,
+      height: 95,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => fallback,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final categoryRecipes = widget.recipes
@@ -129,22 +157,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              recipe.imageUrl,
-                              width: 95,
-                              height: 95,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                width: 95,
-                                height: 95,
-                                color: Colors.orange.shade100,
-                                child: const Icon(
-                                  Icons.fastfood,
-                                  color: Colors.deepOrange,
-                                  size: 40,
-                                ),
-                              ),
-                            ),
+                            child: _buildRecipeImage(recipe.imageUrl),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
