@@ -24,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchKeyword = '';
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   int _countRecipesInCategory(String categoryId) {
     return widget.recipes.where((r) => r.categoryId == categoryId).length;
   }
@@ -201,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
+                        Image.asset(
                           category.imageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(

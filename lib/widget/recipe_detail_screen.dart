@@ -30,6 +30,28 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     _lang = widget.currentLang;
   }
 
+  Widget _buildRecipeImage(String imageUrl) {
+    final trimmed = imageUrl.trim();
+    final fallback = Container(
+      color: Colors.orange.shade100,
+      child: const Icon(Icons.restaurant, size: 80, color: Colors.deepOrange),
+    );
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return Image.network(
+        trimmed,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => fallback,
+      );
+    }
+
+    return Image.asset(
+      trimmed,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => fallback,
+    );
+  }
+
   void _completeCooking() {
     showDialog(
       context: context,
@@ -99,18 +121,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 SizedBox(
                   height: 290,
                   width: double.infinity,
-                  child: Image.network(
-                    widget.recipe.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: Colors.orange.shade100,
-                      child: const Icon(
-                        Icons.restaurant,
-                        size: 80,
-                        color: Colors.deepOrange,
-                      ),
-                    ),
-                  ),
+                  child: _buildRecipeImage(widget.recipe.imageUrl),
                 ),
                 Container(
                   height: 100,
@@ -201,7 +212,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Tên món ăn
                   Text(
                     widget.recipe.getTitle(_lang),
                     style: const TextStyle(

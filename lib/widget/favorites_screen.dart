@@ -16,6 +16,34 @@ class FavoritesScreen extends StatelessWidget {
     required this.onToggleFavorite,
   });
 
+  Widget _buildRecipeImage(String imageUrl) {
+    final trimmed = imageUrl.trim();
+    final fallback = Container(
+      width: 70,
+      height: 70,
+      color: Colors.orange.shade100,
+      child: const Icon(Icons.fastfood, color: Colors.deepOrange),
+    );
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return Image.network(
+        trimmed,
+        width: 70,
+        height: 70,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => fallback,
+      );
+    }
+
+    return Image.asset(
+      trimmed,
+      width: 70,
+      height: 70,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => fallback,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isVi = currentLang == 'vi';
@@ -66,18 +94,7 @@ class FavoritesScreen extends StatelessWidget {
             },
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                recipe.imageUrl,
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 70,
-                  height: 70,
-                  color: Colors.orange.shade100,
-                  child: const Icon(Icons.fastfood, color: Colors.deepOrange),
-                ),
-              ),
+              child: _buildRecipeImage(recipe.imageUrl),
             ),
             title: Text(
               recipe.getTitle(currentLang),

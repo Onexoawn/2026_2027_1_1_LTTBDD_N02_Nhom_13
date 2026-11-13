@@ -7,6 +7,7 @@ import 'widget/home_screen.dart';
 import 'widget/recipe_list_screen.dart';
 import 'widget/favorites_screen.dart';
 import 'widget/new_recipe_modal.dart';
+import 'widget/group_info_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -77,6 +78,15 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  String _getAppBarTitle() {
+    if (_selectedIndex == 1) {
+      return AppData.tr('fav_tab', _currentLang);
+    } else if (_selectedIndex == 3) {
+      return AppData.tr('profile_tab', _currentLang);
+    }
+    return AppData.tr('app_title', _currentLang);
+  }
+
   @override
   Widget build(BuildContext context) {
     final favoriteRecipes = AppData.recipeBox.items
@@ -99,6 +109,8 @@ class _MyAppState extends State<MyApp> {
               favoriteRecipes: favoriteRecipes,
               onToggleFavorite: _toggleFavorite,
             );
+          } else if (_selectedIndex == 3) {
+            currentBody = GroupInfoScreen(currentLang: _currentLang);
           } else {
             currentBody = HomeScreen(
               currentLang: _currentLang,
@@ -113,9 +125,7 @@ class _MyAppState extends State<MyApp> {
               foregroundColor: Colors.white,
               centerTitle: true,
               title: Text(
-                _selectedIndex == 1
-                    ? AppData.tr('fav_tab', _currentLang)
-                    : AppData.tr('app_title', _currentLang),
+                _getAppBarTitle(),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               actions: [
@@ -196,6 +206,14 @@ class _MyAppState extends State<MyApp> {
                     onTap: () {
                       Navigator.pop(ctx);
                       _openAddRecipeModal(ctx);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.group, color: Colors.deepOrange),
+                    title: Text(AppData.tr('profile_tab', _currentLang)),
+                    onTap: () {
+                      setState(() => _selectedIndex = 3);
+                      Navigator.pop(ctx);
                     },
                   ),
                   const Divider(height: 3),

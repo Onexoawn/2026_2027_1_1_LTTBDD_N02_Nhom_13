@@ -25,7 +25,7 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
   final _stepsController = TextEditingController();
   final _imageUrlController = TextEditingController();
 
-  String _selectedCategoryId = '1';
+  String _selectedCategoryId = '';
   String _selectedDifficultyVi = 'Dễ';
   String _selectedLocalImage = '';
   DateTime _currentDate = DateTime.now();
@@ -52,6 +52,34 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
         _currentDate = pickedDate;
       });
     }
+  }
+
+  Widget _buildPreviewImage(String selectedCatImage) {
+    final enteredUrl = _imageUrlController.text.trim();
+
+    if (_selectedLocalImage.isEmpty && enteredUrl.isNotEmpty) {
+      return Image.network(
+        enteredUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.shade200,
+          child: const Icon(Icons.broken_image_outlined, color: Colors.grey),
+        ),
+      );
+    }
+
+    final localPath = _selectedLocalImage.isNotEmpty
+        ? _selectedLocalImage
+        : selectedCatImage;
+
+    return Image.asset(
+      localPath,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        color: Colors.grey.shade200,
+        child: const Icon(Icons.broken_image_outlined, color: Colors.grey),
+      ),
+    );
   }
 
   void submitData() {
@@ -141,10 +169,6 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
       (c) => c.id == _selectedCategoryId,
       orElse: () => AppData.categories.first,
     );
-    final enteredUrl = _imageUrlController.text.trim();
-    final previewImagePath = _selectedLocalImage.isNotEmpty
-        ? _selectedLocalImage
-        : (enteredUrl.isNotEmpty ? enteredUrl : selectedCat.imageUrl);
 
     return SingleChildScrollView(
       child: Container(
@@ -345,8 +369,8 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
               isExpanded: true,
               decoration: InputDecoration(
                 labelText: isVi
-                    ? 'Chọn ảnh có sẵn trong Local (Tùy chọn)'
-                    : 'Select local image (Optional)',
+                    ? 'Chọn ảnh có sẵn trong Local (Image.asset)'
+                    : 'Select local image (Image.asset)',
                 prefixIcon: const Icon(
                   Icons.photo_library_outlined,
                   color: Colors.deepOrange,
@@ -396,8 +420,8 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
                     },
                     decoration: InputDecoration(
                       labelText: isVi
-                          ? 'Hoặc dán link URL ảnh trên mạng vào đây'
-                          : 'Or paste web image URL here',
+                          ? 'Hoặc dán link URL ảnh mạng (Image.network)'
+                          : 'Or paste web image URL (Image.network)',
                       hintText: 'https://...',
                       prefixIcon: const Icon(
                         Icons.link,
@@ -415,12 +439,13 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
                   child: SizedBox(
                     width: 54,
                     height: 54,
-                    child: AppData.buildRecipeImage(previewImagePath),
+                    child: _buildPreviewImage(selectedCat.imageUrl),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
+
             Text(
               'DatePicker',
               style: TextStyle(
@@ -455,6 +480,7 @@ class _NewRecipeModalState extends State<NewRecipeModal> {
               ),
             ),
             const SizedBox(height: 22),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
