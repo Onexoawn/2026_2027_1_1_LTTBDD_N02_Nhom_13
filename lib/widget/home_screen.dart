@@ -35,9 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
       return title.contains(_searchKeyword.toLowerCase());
     }).toList();
 
-    final int c1Count = _countRecipesInCategory('c1') + 1;
-    final int c2Count = _countRecipesInCategory('c2') + 1;
-    final int c3Count = _countRecipesInCategory('c3') + 1;
+    final int c1Count = _countRecipesInCategory('1') + 1;
+    final int c2Count = _countRecipesInCategory('2') + 1;
+    final int c3Count = _countRecipesInCategory('3') + 1;
 
     return SingleChildScrollView(
       child: Padding(

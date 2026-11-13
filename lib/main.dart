@@ -6,6 +6,7 @@ import 'model/recipe.dart';
 import 'widget/home_screen.dart';
 import 'widget/recipe_list_screen.dart';
 import 'widget/favorites_screen.dart';
+import 'widget/new_recipe_modal.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,6 +31,36 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       recipe.isFavorite = !recipe.isFavorite;
     });
+  }
+
+  void _addNewRecipe(BuildContext ctx, Recipe newRecipe) {
+    setState(() {
+      AppData.recipeBox.items.insert(0, newRecipe);
+    });
+
+    ScaffoldMessenger.of(ctx).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text(
+          _currentLang == 'vi'
+              ? 'Đã thêm món "${newRecipe.titleVi}" vào sổ tay!'
+              : 'Added "${newRecipe.titleEn}" to your guide!',
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _openAddRecipeModal(BuildContext ctx) {
+    showModalBottomSheet(
+      context: ctx,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => NewRecipeModal(
+        currentLang: _currentLang,
+        onAddRecipe: (newRecipe) => _addNewRecipe(ctx, newRecipe),
+      ),
+    );
   }
 
   void _handleSelectCategory(BuildContext context, FoodCategory category) {
@@ -156,6 +187,17 @@ class _MyAppState extends State<MyApp> {
                       Navigator.pop(ctx);
                     },
                   ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.add_circle_outline,
+                      color: Colors.deepOrange,
+                    ),
+                    title: Text(AppData.tr('add_tab', _currentLang)),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _openAddRecipeModal(ctx);
+                    },
+                  ),
                   const Divider(height: 3),
                   ListTile(
                     leading: const Icon(
@@ -182,9 +224,13 @@ class _MyAppState extends State<MyApp> {
               unselectedItemColor: Colors.grey,
               type: BottomNavigationBarType.fixed,
               onTap: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
+                if (index == 2) {
+                  _openAddRecipeModal(ctx);
+                } else {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                }
               },
               items: [
                 BottomNavigationBarItem(

@@ -33,6 +33,99 @@ class AppData {
     return dictionary[lang]?[key] ?? key;
   }
 
+  static const List<Map<String, String>> localRecipeImages = [
+    {
+      'labelVi': '-- Không chọn (Nhập URL bên dưới / Theo danh mục) --',
+      'labelEn': '-- None (Enter URL below / Category default) --',
+      'path': '',
+    },
+    {
+      'labelVi': 'Phở Bò Hà Nội',
+      'labelEn': 'Hanoi Beef Pho',
+      'path': 'assets/image/MonChinh/PhoBo.jpg',
+    },
+    {
+      'labelVi': 'Bún Chả Hà Nội',
+      'labelEn': 'Bun Cha Hanoi',
+      'path': 'assets/image/MonChinh/BunChaHaNoi.jpg',
+    },
+    {
+      'labelVi': 'Đậu Hũ Sốt Cà Chua',
+      'labelEn': 'Tomato Sauce Tofu',
+      'path': 'assets/image/MonChay/DauXotCaChua.jpg',
+    },
+    {
+      'labelVi': 'Bánh Flan Caramel',
+      'labelEn': 'Caramel Flan Cake',
+      'path': 'assets/image/DoUong&Che/BanhFlan.jpg',
+    },
+    {
+      'labelVi': 'Ảnh chung - Món chính',
+      'labelEn': 'General - Main Dishes',
+      'path': 'assets/image/MonChinh.jpg',
+    },
+    {
+      'labelVi': 'Ảnh chung - Món chay',
+      'labelEn': 'General - Vegetarian',
+      'path': 'assets/image/MonChay.jpg',
+    },
+    {
+      'labelVi': 'Ảnh chung - Tráng miệng',
+      'labelEn': 'General - Desserts',
+      'path': 'assets/image/TrangMieng.jpg',
+    },
+    {
+      'labelVi': 'Ảnh chung - Đặc sản Vùng cao',
+      'labelEn': 'General - Highland Specialties',
+      'path': 'assets/image/DacSanVungCao.jpg',
+    },
+    {
+      'labelVi': 'Ảnh chung - Đồ uống & Chè',
+      'labelEn': 'General - Drinks & Sweet Soup',
+      'path': 'assets/image/DoUong&Che.jpg',
+    },
+    {
+      'labelVi': 'Ảnh chung - Bánh truyền thống',
+      'labelEn': 'General - Traditional Cakes',
+      'path': 'assets/image/BanhTruyenThong.jpg',
+    },
+  ];
+
+  static Widget buildRecipeImage(
+    String imageUrl, {
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.cover,
+  }) {
+    final trimmed = imageUrl.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return Image.network(
+        trimmed,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: width,
+          height: height,
+          color: Colors.grey.shade200,
+          child: const Icon(Icons.broken_image_outlined, color: Colors.grey),
+        ),
+      );
+    }
+    return Image.asset(
+      trimmed,
+      width: width,
+      height: height,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: width,
+        height: height,
+        color: Colors.grey.shade200,
+        child: const Icon(Icons.broken_image_outlined, color: Colors.grey),
+      ),
+    );
+  }
+
   static const List<FoodCategory> categories = [
     FoodCategory(
       id: '1',
